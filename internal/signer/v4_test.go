@@ -43,11 +43,11 @@ func TestV4Signer_SignRequest(t *testing.T) {
 				authHeader := req.Header.Get("Authorization")
 				assert.NotEmpty(t, authHeader, "Authorization header should be present")
 				assert.Contains(t, authHeader, "AWS4-HMAC-SHA256", "Authorization header should contain AWS4-HMAC-SHA256")
-				
+
 				// Check that X-Amz-Date header is present
 				dateHeader := req.Header.Get("X-Amz-Date")
 				assert.NotEmpty(t, dateHeader, "X-Amz-Date header should be present")
-				
+
 				// Check that credential scope contains service and region
 				assert.Contains(t, authHeader, "us-east-1/execute-api", "Authorization header should contain region and service")
 			},

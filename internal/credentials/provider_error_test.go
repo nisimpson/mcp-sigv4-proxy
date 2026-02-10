@@ -93,7 +93,7 @@ func TestCredentialsError_IncompleteCredentials(t *testing.T) {
 	// This test is difficult to set up because the AWS SDK validates
 	// credentials before returning them. The validation in LoadCredentials
 	// serves as a safety check.
-	
+
 	// The validation logic is already tested in the provider implementation
 	// This test serves as documentation that the requirement is covered
 	t.Skip("Covered by provider validation logic")

@@ -156,7 +156,7 @@ func TestProperty_ProfileBasedCredentials(t *testing.T) {
 		// Generate random credentials using the generators
 		accessKey := awsAccessKeyGen().Draw(t, "accessKey")
 		secretKey := awsSecretKeyGen().Draw(t, "secretKey")
-		
+
 		region := rapid.SampledFrom([]string{
 			"us-east-1", "us-west-2", "eu-west-1", "ap-southeast-1",
 		}).Draw(t, "region")

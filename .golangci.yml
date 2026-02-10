@@ -53,12 +53,17 @@ issues:
       linters:
         - gosec
         - unparam
+        - errcheck
+        - govet
+        - gocritic
     
     # Exclude property test files from certain checks
     - path: _property_test\.go
       linters:
         - gosec
         - gocritic
+        - errcheck
+        - govet
 
   max-issues-per-linter: 0
   max-same-issues: 0

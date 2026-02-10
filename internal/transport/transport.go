@@ -16,14 +16,14 @@ import (
 // SigningTransport implements mcp.Transport with AWS signature support.
 // It wraps HTTP requests to the target MCP server with AWS SigV4/SigV4a signatures.
 type SigningTransport struct {
-	// TargetURL is the endpoint of the target MCP server
-	TargetURL string
+	// HTTPClient makes the actual HTTP requests
+	HTTPClient *http.Client
 
 	// Signer signs HTTP requests
 	Signer signer.Signer
 
-	// HTTPClient makes the actual HTTP requests
-	HTTPClient *http.Client
+	// TargetURL is the endpoint of the target MCP server
+	TargetURL string
 }
 
 // Connect implements mcp.Transport by creating a connection to the target MCP server

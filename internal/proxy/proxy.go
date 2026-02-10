@@ -104,7 +104,7 @@ func (p *Proxy) Run(ctx context.Context) error {
 	if err != nil {
 		// Provide descriptive error message for connection failures
 		// This could be due to network issues, signing errors, or target server problems
-		return fmt.Errorf("failed to connect to target MCP server at %s: %w (check network connectivity, AWS credentials, and target server availability)", 
+		return fmt.Errorf("failed to connect to target MCP server at %s: %w (check network connectivity, AWS credentials, and target server availability)",
 			p.transport.TargetURL, err)
 	}
 	defer clientSession.Close()
@@ -150,23 +150,23 @@ func (p *Proxy) setupForwarding(ctx context.Context) error {
 				// The Arguments field is json.RawMessage, which we pass as-is
 				var args any
 				if len(req.Params.Arguments) > 0 {
-					if err := json.Unmarshal(req.Params.Arguments, &args); err != nil {
-						return nil, fmt.Errorf("failed to unmarshal tool arguments: %w", err)
+					if unmarshalErr := json.Unmarshal(req.Params.Arguments, &args); unmarshalErr != nil {
+						return nil, fmt.Errorf("failed to unmarshal tool arguments: %w", unmarshalErr)
 					}
 				}
-				
+
 				params := &mcp.CallToolParams{
 					Name:      req.Params.Name,
 					Arguments: args,
 				}
 				params.SetProgressToken(req.Params.GetProgressToken())
-				
+
 				// Forward the tool call to the target server
 				// Errors from the target server are forwarded unchanged to the client
-				result, err := p.clientSession.CallTool(ctx, params)
-				if err != nil {
+				result, callErr := p.clientSession.CallTool(ctx, params)
+				if callErr != nil {
 					// Forward target server errors unchanged (Requirement 7.3)
-					return nil, err
+					return nil, callErr
 				}
 				return result, nil
 			})
@@ -183,10 +183,10 @@ func (p *Proxy) setupForwarding(ctx context.Context) error {
 			p.server.AddResource(resource, func(ctx context.Context, req *mcp.ReadResourceRequest) (*mcp.ReadResourceResult, error) {
 				// Forward the resource read to the target server
 				// Errors from the target server are forwarded unchanged to the client
-				result, err := p.clientSession.ReadResource(ctx, req.Params)
-				if err != nil {
+				result, readErr := p.clientSession.ReadResource(ctx, req.Params)
+				if readErr != nil {
 					// Forward target server errors unchanged (Requirement 7.3)
-					return nil, err
+					return nil, readErr
 				}
 				return result, nil
 			})
@@ -203,10 +203,10 @@ func (p *Proxy) setupForwarding(ctx context.Context) error {
 			p.server.AddResourceTemplate(template, func(ctx context.Context, req *mcp.ReadResourceRequest) (*mcp.ReadResourceResult, error) {
 				// Forward the resource read to the target server
 				// Errors from the target server are forwarded unchanged to the client
-				result, err := p.clientSession.ReadResource(ctx, req.Params)
-				if err != nil {
+				result, readErr := p.clientSession.ReadResource(ctx, req.Params)
+				if readErr != nil {
 					// Forward target server errors unchanged (Requirement 7.3)
-					return nil, err
+					return nil, readErr
 				}
 				return result, nil
 			})

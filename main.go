@@ -121,7 +121,7 @@ func run(logger *log.Logger) error {
 	// Start the proxy server
 	logger.Println("Starting proxy server on stdio...")
 	logger.Println("Proxy is ready to accept MCP protocol messages")
-	
+
 	if err := proxyServer.Run(ctx); err != nil {
 		// Check if this is a graceful shutdown
 		if ctx.Err() == context.Canceled {

@@ -16,7 +16,7 @@ func genValidURL() *rapid.Generator[string] {
 			"example.com", "api.example.com", "localhost",
 			"test.example.org", "mcp-server.aws.com",
 		}).Draw(t, "host")
-		
+
 		// Sometimes include port, sometimes not
 		if rapid.Bool().Draw(t, "includePort") {
 			port := rapid.IntRange(1, 65535).Draw(t, "port")
@@ -82,7 +82,7 @@ func TestProperty2_MissingRequiredFieldsFailValidation(t *testing.T) {
 	rapid.Check(t, func(t *rapid.T) {
 		// Generate a configuration with at least one missing required field
 		missingField := rapid.SampledFrom([]string{"targetURL", "region", "serviceName"}).Draw(t, "missingField")
-		
+
 		cfg := Config{
 			TargetURL:        genValidURL().Draw(t, "targetURL"),
 			Region:           genValidRegion().Draw(t, "region"),
