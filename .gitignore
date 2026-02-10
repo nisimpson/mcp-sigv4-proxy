@@ -42,3 +42,8 @@ Thumbs.db
 # Temporary files
 tmp/
 temp/
+
+*.fail
+
+# Kiro development files
+.kiro/

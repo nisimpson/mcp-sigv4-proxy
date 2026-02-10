@@ -1,0 +1,64 @@
+run:
+  timeout: 5m
+  tests: true
+  build-tags:
+    - e2e
+
+linters:
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - gofmt
+    - goimports
+    - misspell
+    - revive
+    - unconvert
+    - unparam
+    - gosec
+    - gocritic
+
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+    check-blank: true
+  
+  govet:
+    enable-all: true
+  
+  revive:
+    rules:
+      - name: exported
+        disabled: false
+      - name: var-naming
+        disabled: false
+  
+  gosec:
+    excludes:
+      - G104 # Audit errors not checked - we handle this with errcheck
+  
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - style
+      - performance
+
+issues:
+  exclude-rules:
+    # Exclude some linters from running on tests files
+    - path: _test\.go
+      linters:
+        - gosec
+        - unparam
+    
+    # Exclude property test files from certain checks
+    - path: _property_test\.go
+      linters:
+        - gosec
+        - gocritic
+
+  max-issues-per-linter: 0
+  max-same-issues: 0
