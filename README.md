@@ -238,101 +238,6 @@ The proxy communicates via stdio, so it can be used with any MCP client that sup
 
 For more troubleshooting tips, see [docs/troubleshooting.md](docs/troubleshooting.md).
 
-## Development
-
-### Prerequisites
-
-- Go 1.25.7 or later
-- AWS credentials configured
-- Git
-
-### Building from Source
-
-```bash
-# Clone the repository
-git clone https://github.com/nisimpson/mcp-sigv4-proxy.git
-cd mcp-sigv4-proxy
-
-# Build the binary
-make build
-
-# Or install directly to GOPATH/bin
-make install
-
-# Run the binary
-./sigv4-proxy --help
-```
-
-### Running Tests
-
-```bash
-# Run all tests (excludes e2e tests)
-make test
-
-# Run with verbose output
-go test -v ./...
-
-# Run with coverage
-make test
-
-# Run e2e integration tests
-make test-e2e
-
-# Run all tests including e2e
-make test-all
-
-# Run linter
-make lint
-```
-
-### Available Make Targets
-
-- `make build` - Build the binary
-- `make test` - Run unit tests with coverage
-- `make test-e2e` - Run e2e integration tests
-- `make test-all` - Run all tests (unit + e2e)
-- `make lint` - Run golangci-lint
-- `make clean` - Remove build artifacts
-- `make install` - Install binary to GOPATH/bin
-- `make version` - Calculate next version based on commits
-- `make version-dry-run` - Show version calculation details (dry run)
-- `make changelog` - Generate changelog since last tag
-- `make changelog-dry-run` - Preview changelog without writing file (dry run)
-- `make help` - Show all available targets
-
-### Testing Release Scripts Locally
-
-You can test the versioning and changelog generation without making any changes:
-
-```bash
-# Preview what version would be calculated
-make version-dry-run
-
-# Preview the changelog that would be generated
-make changelog-dry-run
-```
-
-These dry-run targets show you exactly what would happen during a release without creating tags or modifying files.
-
-### Project Structure
-
-```
-.
-├── internal/
-│   ├── config/             # Configuration management
-│   ├── credentials/        # AWS credential loading
-│   ├── proxy/              # Proxy server implementation
-│   ├── signer/             # SigV4/SigV4a signing
-│   └── transport/          # SigningTransport implementation
-├── e2e/                    # End-to-end integration tests
-├── docs/                   # Additional documentation
-│   ├── aws-credentials.md  # Detailed credential setup guide
-│   ├── examples.md         # Configuration examples
-│   └── troubleshooting.md  # Troubleshooting guide
-├── main.go                 # Main entry point
-└── main_test.go            # Main package tests
-```
-
 ## Security Considerations
 
 - **Credential Protection**: The proxy never logs or exposes AWS credentials. Access keys are masked in logs.
@@ -352,7 +257,7 @@ MIT License - see LICENSE file for details.
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, testing guidelines, and how to submit pull requests.
 
 ## Support
 
