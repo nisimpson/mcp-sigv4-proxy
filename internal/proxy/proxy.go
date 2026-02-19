@@ -104,7 +104,9 @@ func (p *Proxy) Run(ctx context.Context) error {
 	if err != nil {
 		// Provide descriptive error message for connection failures
 		// This could be due to network issues, signing errors, or target server problems
-		return fmt.Errorf("failed to connect to target MCP server at %s: %w (check network connectivity, AWS credentials, and target server availability)",
+		return fmt.Errorf(
+			"failed to connect to target MCP server at %s: %w " +
+			"(check network connectivity, AWS credentials, and target server availability)",
 			p.transport.TargetURL, err)
 	}
 	defer clientSession.Close()
@@ -159,8 +161,12 @@ func (p *Proxy) setupForwarding(ctx context.Context) error {
 					Name:      req.Params.Name,
 					Arguments: args,
 				}
-				params.SetProgressToken(req.Params.GetProgressToken())
 
+				progressToken := req.Params.GetProgressToken()
+				if progressToken != nil {
+					params.SetProgressToken(progressToken)
+				}
+	
 				// Forward the tool call to the target server
 				// Errors from the target server are forwarded unchanged to the client
 				result, callErr := p.clientSession.CallTool(ctx, params)
