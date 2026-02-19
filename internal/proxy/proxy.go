@@ -166,7 +166,7 @@ func (p *Proxy) setupForwarding(ctx context.Context) error {
 				if progressToken != nil {
 					params.SetProgressToken(progressToken)
 				}
-	
+
 				// Forward the tool call to the target server
 				// Errors from the target server are forwarded unchanged to the client
 				result, callErr := p.clientSession.CallTool(ctx, params)
