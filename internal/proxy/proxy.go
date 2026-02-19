@@ -105,8 +105,8 @@ func (p *Proxy) Run(ctx context.Context) error {
 		// Provide descriptive error message for connection failures
 		// This could be due to network issues, signing errors, or target server problems
 		return fmt.Errorf(
-			"failed to connect to target MCP server at %s: %w " +
-			"(check network connectivity, AWS credentials, and target server availability)",
+			"failed to connect to target MCP server at %s: %w "+
+				"(check network connectivity, AWS credentials, and target server availability)",
 			p.transport.TargetURL, err)
 	}
 	defer clientSession.Close()
