@@ -28,6 +28,9 @@ This proxy enables MCP clients to connect to IAM-authenticated MCP servers witho
 - **Standard Credential Chain**: Uses AWS SDK's default credential provider
 - **Profile Support**: Can use named AWS credential profiles
 - **Session Token Support**: Handles temporary credentials with session tokens
+- **Server-Sent Events**: Optional SSE support for streaming responses
+- **Request Timeout**: Configurable timeout for HTTP requests to target server
+- **Custom Headers**: Add custom headers to proxied requests
 - **Graceful Shutdown**: Handles SIGINT/SIGTERM signals for clean shutdown
 - **Structured Logging**: Provides detailed logging for debugging and monitoring
 
@@ -82,6 +85,9 @@ The proxy can be configured via command-line flags or environment variables. Com
 | Service Name | `--service-name` | `AWS_SERVICE_NAME` | Yes | - | AWS service name for signing (e.g., execute-api) |
 | Signature Version | `--sig-version` | `AWS_SIG_VERSION` | No | `v4` | Signature version: `v4` or `v4a` |
 | Profile | `--profile` | `AWS_PROFILE` | No | `default` | AWS credential profile name |
+| Enable SSE | `--sse` | `MCP_ENABLE_SSE` | No | `false` | Enable Server-Sent Events for streaming responses |
+| Timeout | `--timeout` | `MCP_TIMEOUT` | No | No timeout | Request timeout duration (e.g., 30s, 1m) |
+| Headers | `--headers` | `MCP_HEADERS` | No | - | Comma-delimited custom headers (format: key=value,key2=value2) |
 
 ### Configuration Examples
 
@@ -123,6 +129,27 @@ sigv4-proxy \
   --region us-east-1 \
   --service-name execute-api \
   --profile production
+```
+
+#### Example 5: With Server-Sent Events and Timeout
+
+```bash
+sigv4-proxy \
+  --target-url https://abc123.execute-api.us-east-1.amazonaws.com \
+  --region us-east-1 \
+  --service-name execute-api \
+  --sse \
+  --timeout 30s
+```
+
+#### Example 6: With Custom Headers
+
+```bash
+sigv4-proxy \
+  --target-url https://abc123.execute-api.us-east-1.amazonaws.com \
+  --region us-east-1 \
+  --service-name execute-api \
+  --headers "X-Custom-Header=value,X-API-Version=v2"
 ```
 
 See [docs/examples.md](docs/examples.md) for more detailed configuration examples.
