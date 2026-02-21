@@ -238,9 +238,9 @@ func TestLoadFromEnv_WithSSE(t *testing.T) {
 	}()
 
 	tests := []struct {
-		name      string
-		sseValue  string
-		wantSSE   bool
+		name     string
+		sseValue string
+		wantSSE  bool
 	}{
 		{
 			name:     "SSE enabled with true",

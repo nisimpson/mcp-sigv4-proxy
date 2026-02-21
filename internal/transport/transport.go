@@ -22,14 +22,14 @@ type SigningTransport struct {
 	// Signer signs HTTP requests
 	Signer signer.Signer
 
+	// Headers contains additional headers to add to all signed requests
+	Headers map[string]string
+
 	// TargetURL is the endpoint of the target MCP server
 	TargetURL string
 
 	// EnableSSE enables Server-Sent Events support for streaming responses
 	EnableSSE bool
-
-	// Headers contains additional headers to add to all signed requests
-	Headers map[string]string
 }
 
 // Connect implements mcp.Transport by creating a connection to the target MCP server

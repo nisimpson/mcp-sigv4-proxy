@@ -27,14 +27,14 @@ type Config struct {
 	// Profile is the AWS credential profile name (optional)
 	Profile string
 
-	// EnableSSE enables Server-Sent Events for streaming responses
-	EnableSSE bool
+	// Comma delimited list of headers
+	Headers string
 
 	// Timeout is the request timeout duration for HTTP requests to the target server
 	Timeout time.Duration
 
-	// Comma delimited list of headers
-	Headers string
+	// EnableSSE enables Server-Sent Events for streaming responses
+	EnableSSE bool
 }
 
 // LoadFromEnv loads configuration from environment variables only.

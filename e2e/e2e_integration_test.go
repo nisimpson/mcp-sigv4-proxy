@@ -24,7 +24,7 @@ import (
 // from the transport package. This ensures e2e tests use the real production code.
 func createSigningHTTPClient(signer signer.Signer) *http.Client {
 	return &http.Client{
-		Transport: transport.NewSigningRoundTripper(http.DefaultTransport, signer),
+		Transport: transport.NewSigningRoundTripper(http.DefaultTransport, signer, make(map[string]string)),
 	}
 }
 

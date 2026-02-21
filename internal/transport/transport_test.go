@@ -273,7 +273,7 @@ func TestSigningTransport_WithTimeout(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			signer := &mockSigner{}
-			
+
 			// Parse timeout duration
 			var timeout http.Client
 			if tt.timeout != "0s" {
