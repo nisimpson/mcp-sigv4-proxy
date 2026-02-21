@@ -46,7 +46,7 @@ func TestTransportError_NetworkFailure(t *testing.T) {
 			signer := &mockSigner{}
 
 			// Create the signing round tripper
-			rt := NewSigningRoundTripper(http.DefaultTransport, signer)
+			rt := NewSigningRoundTripper(http.DefaultTransport, signer, map[string]string{})
 
 			// Create a request to the unreachable target
 			req, err := http.NewRequest("POST", targetURL, strings.NewReader("test"))
@@ -104,7 +104,7 @@ func TestTransportError_SigningFailure(t *testing.T) {
 			}
 
 			// Create the signing round tripper
-			rt := NewSigningRoundTripper(http.DefaultTransport, signer)
+			rt := NewSigningRoundTripper(http.DefaultTransport, signer, map[string]string{})
 
 			// Create a request
 			req, err := http.NewRequest("POST", server.URL, strings.NewReader("test"))
@@ -135,7 +135,7 @@ func TestTransportError_BodyReadFailure(t *testing.T) {
 	signer := &mockSigner{}
 
 	// Create the signing round tripper
-	rt := NewSigningRoundTripper(http.DefaultTransport, signer)
+	rt := NewSigningRoundTripper(http.DefaultTransport, signer, map[string]string{})
 
 	// Create a request with a body that fails to read
 	req, err := http.NewRequest("POST", server.URL, &errorReader{})
@@ -198,7 +198,7 @@ func TestTransportError_TargetServerHTTPError(t *testing.T) {
 			signer := &mockSigner{}
 
 			// Create the signing round tripper
-			rt := NewSigningRoundTripper(http.DefaultTransport, signer)
+			rt := NewSigningRoundTripper(http.DefaultTransport, signer, map[string]string{})
 
 			// Create a request
 			req, err := http.NewRequest("POST", server.URL, strings.NewReader("test"))
@@ -229,7 +229,7 @@ func TestTransportError_NetworkErrorIncludesHost(t *testing.T) {
 	signer := &mockSigner{}
 
 	// Create the signing round tripper
-	rt := NewSigningRoundTripper(http.DefaultTransport, signer)
+	rt := NewSigningRoundTripper(http.DefaultTransport, signer, map[string]string{})
 
 	// Create a request
 	req, err := http.NewRequest("POST", targetURL, strings.NewReader("test"))

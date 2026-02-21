@@ -24,6 +24,12 @@ type SigningTransport struct {
 
 	// TargetURL is the endpoint of the target MCP server
 	TargetURL string
+
+	// EnableSSE enables Server-Sent Events support for streaming responses
+	EnableSSE bool
+
+	// Headers contains additional headers to add to all signed requests
+	Headers map[string]string
 }
 
 // Connect implements mcp.Transport by creating a connection to the target MCP server
@@ -35,14 +41,15 @@ func (t *SigningTransport) Connect(ctx context.Context) (mcp.Connection, error) 
 
 	// Create a signing HTTP client that wraps the original client's transport
 	signingClient := &http.Client{
-		Transport: NewSigningRoundTripper(t.HTTPClient.Transport, t.Signer),
+		Transport: NewSigningRoundTripper(t.HTTPClient.Transport, t.Signer, t.Headers),
 		Timeout:   t.HTTPClient.Timeout,
 	}
 
 	// Use the MCP SDK's StreamableClientTransport with our signing client
 	streamTransport := &mcp.StreamableClientTransport{
-		Endpoint:   t.TargetURL,
-		HTTPClient: signingClient,
+		Endpoint:             t.TargetURL,
+		HTTPClient:           signingClient,
+		DisableStandaloneSSE: !t.EnableSSE,
 	}
 
 	return streamTransport.Connect(ctx)
@@ -53,13 +60,15 @@ func (t *SigningTransport) Connect(ctx context.Context) (mcp.Connection, error) 
 type SigningRoundTripper struct {
 	Transport http.RoundTripper
 	Signer    signer.Signer
+	Headers   map[string]string
 }
 
 // NewSigningRoundTripper creates a new SigningRoundTripper with the given transport and signer.
-func NewSigningRoundTripper(transport http.RoundTripper, signer signer.Signer) *SigningRoundTripper {
+func NewSigningRoundTripper(transport http.RoundTripper, signer signer.Signer, headers map[string]string) *SigningRoundTripper {
 	return &SigningRoundTripper{
 		Transport: transport,
 		Signer:    signer,
+		Headers:   headers,
 	}
 }
 
@@ -69,6 +78,12 @@ func (rt *SigningRoundTripper) RoundTrip(req *http.Request) (*http.Response, err
 	transport := rt.Transport
 	if transport == nil {
 		transport = http.DefaultTransport
+	}
+
+	if len(rt.Headers) > 0 {
+		for key, value := range rt.Headers {
+			req.Header.Set(key, value)
+		}
 	}
 
 	// Read the request body to calculate the payload hash

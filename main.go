@@ -4,8 +4,10 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	"github.com/nisimpson/mcp-sigv4-proxy/internal/config"
@@ -48,6 +50,7 @@ func run(logger *log.Logger) error {
 	logger.Printf("  Service: %s", cfg.ServiceName)
 	logger.Printf("  Signature Version: %s", cfg.SignatureVersion)
 	logger.Printf("  Profile: %s", cfg.Profile)
+	logger.Printf("  EnableSSE: %v", cfg.EnableSSE)
 
 	// Create context that can be cancelled on shutdown signals
 	ctx, cancel := context.WithCancel(context.Background())
@@ -103,8 +106,17 @@ func run(logger *log.Logger) error {
 
 	// Create the signing transport
 	signingTransport := &transport.SigningTransport{
-		TargetURL: cfg.TargetURL,
-		Signer:    sig,
+		TargetURL:  cfg.TargetURL,
+		Signer:     sig,
+		EnableSSE:  cfg.EnableSSE,
+		HTTPClient: &http.Client{Timeout: cfg.Timeout},
+		Headers:    make(map[string]string),
+	}
+
+	tokens := strings.Split(cfg.Headers, ",")
+	for _, token := range tokens {
+		pair := strings.Split(token, "=")
+		signingTransport.Headers[pair[0]] = pair[1]
 	}
 
 	// Create the proxy server

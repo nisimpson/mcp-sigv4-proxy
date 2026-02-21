@@ -48,7 +48,7 @@ func TestProperty7_MessageBodyPreservation(t *testing.T) {
 
 		// Create the signing round tripper
 		signer := &mockSigner{}
-		rt := NewSigningRoundTripper(http.DefaultTransport, signer)
+		rt := NewSigningRoundTripper(http.DefaultTransport, signer, map[string]string{})
 
 		// Create and execute a request with the generated message body
 		req, err := http.NewRequest("POST", server.URL, strings.NewReader(messageBody))
@@ -106,7 +106,7 @@ func TestProperty_SignatureIncludesPayloadHash(t *testing.T) {
 		defer server.Close()
 
 		// Create the signing round tripper
-		rt := NewSigningRoundTripper(http.DefaultTransport, testSigner)
+		rt := NewSigningRoundTripper(http.DefaultTransport, testSigner, map[string]string{})
 
 		// Create and execute a request
 		var body io.Reader
@@ -149,7 +149,7 @@ func TestProperty_SigningPreservesHeaders(t *testing.T) {
 
 		// Create the signing round tripper
 		signer := &mockSigner{}
-		rt := NewSigningRoundTripper(http.DefaultTransport, signer)
+		rt := NewSigningRoundTripper(http.DefaultTransport, signer, map[string]string{})
 
 		// Create a request with a custom header
 		req, err := http.NewRequest("POST", server.URL, nil)

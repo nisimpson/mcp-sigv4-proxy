@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"strconv"
+	"time"
 )
 
 // Config holds proxy configuration
@@ -24,6 +26,15 @@ type Config struct {
 
 	// Profile is the AWS credential profile name (optional)
 	Profile string
+
+	// EnableSSE enables Server-Sent Events for streaming responses
+	EnableSSE bool
+
+	// Timeout is the request timeout duration for HTTP requests to the target server
+	Timeout time.Duration
+
+	// Comma delimited list of headers
+	Headers string
 }
 
 // LoadFromEnv loads configuration from environment variables only.
@@ -35,6 +46,9 @@ func LoadFromEnv() (*Config, error) {
 		ServiceName:      os.Getenv("AWS_SERVICE_NAME"),
 		SignatureVersion: os.Getenv("AWS_SIG_VERSION"),
 		Profile:          os.Getenv("AWS_PROFILE"),
+		EnableSSE:        getBoolEnv("MCP_ENABLE_SSE"),
+		Timeout:          getDurationEnv("MCP_TIMEOUT"),
+		Headers:          os.Getenv("MCP_HEADERS"),
 	}
 
 	// Set default signature version if not specified
@@ -55,21 +69,31 @@ func LoadFromEnv() (*Config, error) {
 	return cfg, nil
 }
 
+func getBoolEnv(key string) bool {
+	value := os.Getenv(key)
+	boolValue, err := strconv.ParseBool(value)
+	if err != nil {
+		return false
+	}
+	return boolValue
+}
+
+func getDurationEnv(key string) time.Duration {
+	value := os.Getenv(key)
+	durationValue, err := time.ParseDuration(value)
+	if err != nil {
+		return 0
+	}
+	return durationValue
+}
+
 // Load loads configuration from environment variables and command-line flags.
 // Command-line flags take precedence over environment variables.
 func Load() (*Config, error) {
 	// First load from environment
 	cfg, err := LoadFromEnv()
 	if err != nil {
-		// If validation fails, we still want to try flags
-		// So create a new config with env values
-		cfg = &Config{
-			TargetURL:        os.Getenv("MCP_TARGET_URL"),
-			Region:           os.Getenv("AWS_REGION"),
-			ServiceName:      os.Getenv("AWS_SERVICE_NAME"),
-			SignatureVersion: os.Getenv("AWS_SIG_VERSION"),
-			Profile:          os.Getenv("AWS_PROFILE"),
-		}
+		fmt.Printf("load environment variables failed")
 	}
 
 	// Define and parse command-line flags
@@ -78,6 +102,9 @@ func Load() (*Config, error) {
 	serviceName := flag.String("service-name", "", "AWS service name for signing (e.g., execute-api)")
 	sigVersion := flag.String("sig-version", "", "Signature version (v4 or v4a)")
 	profile := flag.String("profile", "", "AWS credential profile name")
+	enableSSE := flag.Bool("sse", false, "enable server-side events")
+	timeout := flag.Duration("timeout", 0, "mcp client timeout (default no timeout)")
+	headers := flag.String("headers", "", "comma delimited list of headers (key=value)")
 
 	flag.Parse()
 
@@ -96,6 +123,15 @@ func Load() (*Config, error) {
 	}
 	if *profile != "" {
 		cfg.Profile = *profile
+	}
+	if *enableSSE {
+		cfg.EnableSSE = *enableSSE
+	}
+	if *timeout > 0 {
+		cfg.Timeout = *timeout
+	}
+	if *headers != "" {
+		cfg.Headers = *headers
 	}
 
 	// Set default signature version if not specified
