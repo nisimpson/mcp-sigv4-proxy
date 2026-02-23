@@ -146,7 +146,7 @@ func Load() (*Config, error) {
 
 	// Validate configuration
 	if err := cfg.Validate(); err != nil {
-		return nil, err
+		return cfg, err
 	}
 
 	return cfg, nil
