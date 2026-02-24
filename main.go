@@ -39,7 +39,7 @@ func run(logger *log.Logger) error {
 
 	// Load configuration from environment variables and command-line flags
 	logger.Println("Loading configuration...")
-	cfg, err := config.Load()
+	cfg, err := config.Load(logger)
 	if err != nil {
 		return fmt.Errorf("configuration error: %w", err)
 	}
@@ -113,12 +113,14 @@ func run(logger *log.Logger) error {
 		Headers:    make(map[string]string),
 	}
 
-	tokens := strings.Split(cfg.Headers, ",")
-	for _, token := range tokens {
-		pair := strings.Split(token, "=")
-		signingTransport.Headers[pair[0]] = pair[1]
+	if cfg.Headers != "" {
+		tokens := strings.Split(cfg.Headers, ",")
+		for _, token := range tokens {
+			pair := strings.Split(token, "=")
+			signingTransport.Headers[pair[0]] = pair[1]
+		}
 	}
-
+	
 	// Create the proxy server
 	logger.Println("Creating proxy server...")
 	proxyServer, err := proxy.New(proxy.Config{
