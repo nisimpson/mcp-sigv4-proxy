@@ -120,7 +120,7 @@ func run(logger *log.Logger) error {
 			signingTransport.Headers[pair[0]] = pair[1]
 		}
 	}
-	
+
 	// Create the proxy server
 	logger.Println("Creating proxy server...")
 	proxyServer, err := proxy.New(proxy.Config{
