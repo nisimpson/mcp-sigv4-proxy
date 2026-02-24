@@ -4,6 +4,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"log"
 	"net/url"
 	"os"
 	"strconv"
@@ -89,11 +90,11 @@ func getDurationEnv(key string) time.Duration {
 
 // Load loads configuration from environment variables and command-line flags.
 // Command-line flags take precedence over environment variables.
-func Load() (*Config, error) {
+func Load(logger *log.Logger) (*Config, error) {
 	// First load from environment
 	cfg, err := LoadFromEnv()
 	if err != nil {
-		fmt.Printf("load environment variables failed")
+		logger.Printf("load environment variables failed")
 	}
 
 	// Define and parse command-line flags
